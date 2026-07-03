@@ -50,25 +50,61 @@ export default function HomeScreen() {
   const [search, setSearch] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [coupons, setCoupons] = useState<{ code: string; description?: string; discountValue?: number; discountType?: string }[]>([]);
+const load = useCallback(async () => {
+  setError(null);
 
-  const load = useCallback(async () => {
-    setError(null);
-    try {
-      const [catRes, popRes, couponRes] = await Promise.all([
-        CatalogAPI.getCategories(),
-        CatalogAPI.getPopularServices(),
-        CouponAPI.getActive().catch(() => ({ data: [] })),
-      ]);
-      setCategories(catRes.data ?? []);
-      setPopular(popRes.data ?? []);
-      setCoupons((couponRes as any).data ?? []);
-    } catch {
-      setError('Could not load services. Pull down to try again.');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, []);
+  try {
+    const [catRes, popRes, couponRes] = await Promise.all([
+      CatalogAPI.getCategories(),
+      CatalogAPI.getPopularServices(),
+      CouponAPI.getActive().catch(() => ({ data: [] })),
+    ]);
+
+    console.log("Categories API:", JSON.stringify(catRes, null, 2));
+    console.log("Popular API:", JSON.stringify(popRes, null, 2));
+    console.log("Coupons API:", JSON.stringify(couponRes, null, 2));
+
+    // Categories
+    const categoriesData =
+      catRes?.data?.data ??
+      catRes?.data?.categories ??
+      catRes?.data ??
+      [];
+
+    setCategories(
+      Array.isArray(categoriesData) ? categoriesData : []
+    );
+
+    // Popular Services
+    const popularData =
+      popRes?.data?.data ??
+      popRes?.data?.services ??
+      popRes?.data ??
+      [];
+
+    setPopular(
+      Array.isArray(popularData) ? popularData : []
+    );
+
+    // Coupons
+    const couponData =
+      couponRes?.data?.data ??
+      couponRes?.data?.coupons ??
+      couponRes?.data ??
+      [];
+
+    setCoupons(
+      Array.isArray(couponData) ? couponData : []
+    );
+
+  } catch (err) {
+    console.log("Home Screen Error:", err);
+    setError("Could not load services. Pull down to try again.");
+  } finally {
+    setLoading(false);
+    setRefreshing(false);
+  }
+}, []);
 
   useEffect(() => { load(); }, [load]);
 
@@ -136,7 +172,9 @@ export default function HomeScreen() {
             <EmptyState icon="cloud-offline-outline" title="Something went wrong" subtitle={error} />
           ) : (
             <View style={styles.categoryGrid}>
-              {categories.slice(0, 8).map((cat) => (
+              {(Array.isArray(categories) ? categories : [])
+  .slice(0, 8)
+  .map((cat) => (
                 <Pressable
                   key={cat.id}
                   style={({ pressed }) => [styles.catItem, { opacity: pressed ? 0.75 : 1 }]}
@@ -165,7 +203,8 @@ export default function HomeScreen() {
             <EmptyState icon="construct-outline" title="No services yet" subtitle="Check back soon!" />
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.lg }}>
-              {popular.map((service) => (
+             {(Array.isArray(popular) ? popular : [])
+  .map((service) => (
                 <Pressable
                   key={service.id}
                   onPress={() => router.push({ pathname: '/service/[id]', params: { id: service.id } })}
