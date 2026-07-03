@@ -16,7 +16,8 @@
         {
           "color": "#1E63E9"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "ios": {
       "supportsTablet": true,
