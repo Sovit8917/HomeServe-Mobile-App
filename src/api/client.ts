@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 // Android emulator -> host machine is 10.0.2.2. iOS simulator/web -> localhost.
 // Update this if testing on a physical device (use your machine's LAN IP).
-export const LOCAL_HOST = 'http://192.168.1.7:3000';
+export const LOCAL_HOST = 'https://nextjs-backend-with-fix.onrender.com';  //local :  'http://192.168.1.7:3000' 
 
 export const API_BASE_URL = `${LOCAL_HOST}/api/v1`;
 
