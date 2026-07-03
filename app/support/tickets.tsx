@@ -45,7 +45,7 @@ export default function SupportTickets() {
     if (!subject.trim() || !message.trim()) { Alert.alert('Fill in all fields'); return; }
     setCreating(true);
     try {
-      const { data } = await SupportAPI.createTicket({ subject: subject.trim(), message: message.trim() });
+      const { data } = await SupportAPI.createTicket({ subject: subject.trim(), description: message.trim() });
       setTickets((prev) => [data, ...prev]);
       setShowCreate(false);
       setSubject(''); setMessage('');

@@ -154,7 +154,7 @@ export const CouponAPI = {
 // ---------- Support ----------
 export const SupportAPI = {
   getFaq: () => api.get('/support/faq'),
-  createTicket: (data: { subject: string; message: string }) =>
+  createTicket: (data: { subject: string; description: string }) =>
     api.post('/support/tickets', data),
   myTickets: () => api.get('/support/tickets'),
   getTicket: (id: string) => api.get(`/support/tickets/${id}`),

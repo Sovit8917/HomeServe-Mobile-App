@@ -22,7 +22,7 @@ import {
   spacing,
   radius,
   shadow,
-} from "../../src/theme";
+} from "../../../src/theme";
 import {
   CatalogAPI,
   BookingAPI,
@@ -31,12 +31,12 @@ import {
   PaymentAPI,
   Service,
   Address,
-} from "../../src/api/endpoints";
+} from "../../../src/api/endpoints";
 import RazorpayCheckout from "react-native-razorpay";
-import Button from "../../src/components/Button";
-import { Card, Input } from "../../src/components/ui";
-import { useLocation } from "../../src/hooks/useLocation";
-import { useAuth } from "../../src/store/auth-context";
+import Button from "../../../src/components/Button";
+import { Card, Input } from "../../../src/components/ui";
+import { useLocation } from "../../../src/hooks/useLocation";
+import { useAuth } from "../../../src/store/auth-context";
 
 const STEPS = ["Date & Time", "Address", "Summary", "Payment"];
 
@@ -133,7 +133,7 @@ export default function BookingFlow() {
   const [addingAddress, setAddingAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({
     label: "Home",
-    line1: "",
+    fullAddress: "",
     city: "",
   });
 
@@ -459,7 +459,7 @@ export default function BookingFlow() {
                       if (loc) {
                         setNewAddress((prev) => ({
                           ...prev,
-                          line1: loc.line1,
+                          fullAddress: loc.line1,
                           city: loc.city ?? prev.city,
                         }));
                       }
@@ -520,9 +520,9 @@ export default function BookingFlow() {
                     label="Street address"
                     leftIcon="location-outline"
                     placeholder="House no., street, area"
-                    value={newAddress.line1}
+                    value={newAddress.fullAddress}
                     onChangeText={(t) =>
-                      setNewAddress({ ...newAddress, line1: t })
+                      setNewAddress({ ...newAddress, fullAddress: t })
                     }
                   />
                   <Input
@@ -538,7 +538,7 @@ export default function BookingFlow() {
                     title="Save Address"
                     size="sm"
                     onPress={async () => {
-                      if (!newAddress.line1) return;
+                      if (!newAddress.fullAddress) return;
                       try {
                         const { data } = await UserAPI.addAddress(
                           newAddress as any,
