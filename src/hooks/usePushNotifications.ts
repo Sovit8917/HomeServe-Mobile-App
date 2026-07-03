@@ -1,23 +1,33 @@
 import { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import * as Notifications from 'expo-notifications';
+import type * as NotificationsType from 'expo-notifications';
 import * as Device from 'expo-device';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { UserAPI } from '../api/endpoints';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// Push notifications aren't supported in Expo Go (removed in SDK 53+).
+// We conditionally require the module so its side-effect code
+// (which throws/warns immediately on import) never runs in Expo Go.
+const isExpoGo = Constants.appOwnership === 'expo';
+
+let Notifications: typeof NotificationsType | null = null;
+if (!isExpoGo) {
+  Notifications = require('expo-notifications');
+  Notifications!.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+}
 
 async function registerForPushNotificationsAsync(): Promise<string | null> {
-  if (!Device.isDevice) {
-    // Push tokens only work on physical devices / real builds, not simulators.
+  if (!Notifications || !Device.isDevice) {
+    // Skip in Expo Go, and push tokens only work on physical devices / real builds anyway.
     return null;
   }
 
@@ -50,13 +60,15 @@ async function registerForPushNotificationsAsync(): Promise<string | null> {
  * Registers this device for push notifications once the user is
  * authenticated, syncs the token to the backend, and routes the user
  * to the right screen when they tap a notification.
+ *
+ * No-op inside Expo Go — push notifications require a development build.
  */
 export function usePushNotifications(isAuthenticated: boolean) {
   const router = useRouter();
-  const responseListener = useRef<Notifications.Subscription | null>(null);
+  const responseListener = useRef<NotificationsType.Subscription | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !Notifications) return;
 
     let cancelled = false;
 
