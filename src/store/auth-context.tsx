@@ -44,16 +44,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const verifyOtp = async (phone: string, otp: string) => {
-    const { data }: any = await AuthAPI.verifyOtp(phone, otp, 'CUSTOMER');
-    const accessToken = data.accessToken ?? data.token;
-    const refreshToken = data.refreshToken;
-    if (accessToken) await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
-    if (refreshToken) await SecureStore.setItemAsync(REFRESH_KEY, refreshToken);
-    setUser(data.user ?? null);
-    if (!data.user) {
-      const me = await AuthAPI.me();
-      setUser(me.data);
-    }
+    const response: any = await AuthAPI.verifyOtp(phone, otp, 'CUSTOMER');
+
+const auth = response.data.data;
+
+const accessToken = auth.token;
+
+if (accessToken) {
+  await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
+}
+
+setUser(auth.user);
+
+if (!auth.user) {
+  const me = await AuthAPI.me();
+  setUser(me.data.data ?? me.data);
+}
   };
 
   const logout = async () => {
