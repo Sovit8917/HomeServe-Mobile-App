@@ -36,7 +36,7 @@ export default function BookingDetail() {
     setError(null);
     try {
       const { data } = await BookingAPI.getById(id!);
-      setBooking(data);
+      setBooking(data?.data)
     } catch {
       setError('Could not load this booking. Please try again.');
     } finally {

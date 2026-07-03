@@ -24,7 +24,7 @@ export default function NotificationsScreen() {
     setError(null);
     try {
       const { data } = await NotificationAPI.getAll();
-      setNotifications(data ?? []);
+setNotifications(data?.data?.notifications ?? []);
     } catch {
       setError('Could not load notifications. Pull down to try again.');
     } finally {

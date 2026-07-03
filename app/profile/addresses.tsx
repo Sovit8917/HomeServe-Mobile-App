@@ -32,7 +32,7 @@ export default function AddressesScreen() {
     setLoadError(null);
     try {
       const { data } = await UserAPI.getAddresses();
-      setAddresses(data ?? []);
+      setAddresses(data?.data ?? [])
     } catch {
       setLoadError('Could not load your addresses. Check your connection and try again.');
     } finally {

@@ -31,7 +31,7 @@ export default function SupportTickets() {
     setError(null);
     try {
       const { data } = await SupportAPI.myTickets();
-      setTickets(data ?? []);
+      setTickets(data?.data?.tickets ?? [])
     } catch {
       setError('Could not load your support tickets. Please try again.');
     } finally {

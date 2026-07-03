@@ -30,7 +30,7 @@ export default function WorkerList() {
           return;
         }
         const { data } = await WorkerAPI.getNearby({ lat: loc.latitude, lng: loc.longitude, serviceId });
-        setWorkers(data ?? []);
+        setWorkers(data?.data ?? [])
       } catch {
         setError('Could not load nearby professionals. Please try again.');
       } finally {

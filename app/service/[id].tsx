@@ -32,7 +32,7 @@ export default function ServiceDetail() {
     setError(null);
     try {
       const { data } = await CatalogAPI.getService(id!);
-      setService(data);
+      setService(data?.data)
     } catch {
       setError('Could not load this service. Please try again.');
     } finally {

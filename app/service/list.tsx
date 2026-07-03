@@ -24,7 +24,7 @@ export default function ServiceList() {
     setError(null);
     try {
       const { data } = await CatalogAPI.getServices({ categoryId, search });
-      setServices(data ?? []);
+      setServices(data?.data ?? [])
     } catch {
       setError('Could not load services. Pull down to try again.');
     } finally {

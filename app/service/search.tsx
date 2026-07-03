@@ -30,7 +30,7 @@ export default function SearchScreen() {
       setLoading(true);
       try {
         const { data } = await CatalogAPI.getServices({ search: query });
-        setResults(data ?? []);
+        setResults(data?.data ?? [])
       } catch {
         setResults([]);
       } finally {
