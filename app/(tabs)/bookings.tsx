@@ -15,19 +15,19 @@ const TABS = ['Upcoming', 'Active', 'Completed', 'Cancelled'] as const;
 type TabT = (typeof TABS)[number];
 
 const STATUS_MAP: Record<TabT, string[]> = {
-  Upcoming: ['SCHEDULED', 'CONFIRMED'],
-  Active: ['IN_PROGRESS', 'WORKER_ARRIVED'],
+  Upcoming: ['PENDING', 'ACCEPTED'],
+  Active: ['IN_PROGRESS'],
   Completed: ['COMPLETED'],
-  Cancelled: ['CANCELLED'],
+  Cancelled: ['CANCELLED', 'REJECTED'],
 };
 
 const STATUS_TONE: Record<string, 'info' | 'success' | 'warning' | 'danger'> = {
-  SCHEDULED: 'info',
-  CONFIRMED: 'info',
+  PENDING: 'info',
+  ACCEPTED: 'info',
   IN_PROGRESS: 'warning',
-  WORKER_ARRIVED: 'warning',
   COMPLETED: 'success',
   CANCELLED: 'danger',
+  REJECTED: 'danger',
 };
 
 function statusLabel(s: string) {
@@ -97,8 +97,8 @@ export default function BookingsScreen() {
           ) : (
             <Text style={styles.noWorker}>Worker not assigned yet</Text>
           )}
-          {item.total ? (
-            <Text style={styles.totalAmount}>₹{item.total}</Text>
+          {item.finalAmount ? (
+            <Text style={styles.totalAmount}>₹{item.finalAmount}</Text>
           ) : null}
         </View>
 
